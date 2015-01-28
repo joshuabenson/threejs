@@ -16,6 +16,7 @@
 			<script src="js/headtrackr.js"></script> <!--//headtracking library-->
 
 			<script src="js/Detector.js"></script> 
+			<script src="js/ColladaLoader.js"></script>
 		
 
 		<canvas id="compare" width="320" height="240" style="display:none"></canvas>
@@ -43,17 +44,41 @@
 
 				camera.position.z = 60 //moves camera away from default 0,0,0
 
-			
 
 				renderer = new THREE.WebGLRenderer(); //RENDERER
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				document.body.appendChild( renderer.domElement );
 
 				geometry = new THREE.BoxGeometry(10, 10, 10);  //Object that contains all the points and fill of the cube
-				material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );// Material to color the cube
+				material = new THREE.MeshLambertMaterial( { color: 0x00ff00 } );// Material to color the cube
 
-				cube = new THREE.Mesh( geometry, material );
-				scene.add( cube );  //Mesh that takes the geometry and applies a material to it
+				/*cube = new THREE.Mesh( geometry, material );
+				
+				scene.add( cube );  
+				cube.position.set(3,3,0)
+				//Mesh that takes the geometry and applies a material to it
+
+				cube2 = cube.clone();
+				scene.add( cube2 );
+				cube2.position.set(3,3,6);*/
+
+				light = new THREE.PointLight(0xffffff);
+    			light.position.set(-10,20,0);
+   				scene.add(light);
+
+   				light = new THREE.PointLight(0xffffff);
+    			light.position.set(12,-10,-7);
+   				scene.add(light);
+
+   				light = new THREE.PointLight(0xffffff);
+    			light.position.set(20,0,10);
+   				scene.add(light);
+
+   				var loader = new THREE.ColladaLoader();
+				loader.load('dumb.dae', function (dumb) {
+  				scene.add(dumb.scene);
+				});
+			
 			};
 
 		
@@ -61,8 +86,10 @@
 		var render = function () {
 			
 
-			cube.rotation.x += 0.01;
+			/*cube.rotation.x += 0.01;
 			cube.rotation.y += 0.01;  //rotate that stupid cube
+
+			cube2.rotation.y += 0.03;*/
 
 			renderer.render( scene, camera );  //render the scene baby
 			requestAnimationFrame( render  );  
