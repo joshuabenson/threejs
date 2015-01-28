@@ -1,6 +1,10 @@
-<html> 
-	<head>
-	<title>My First Three.js app</title>
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<title>My First Three ver2.js app</title>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	</head>
 	<style> 
 			body {margin: 0; }
 			canvas { width: 100%; height: 100% ;}
@@ -9,40 +13,76 @@
 	</head>
 	<body>
 			<script src="js/three.min.js"></script>
+			<script src="js/headtrackr.js"></script> <!--//headtracking library-->
+
+			<script src="js/Detector.js"></script> 
+		
+
+		<canvas id="compare" width="320" height="240" style="display:none"></canvas>
+		<video id="vid" autoplay loop></video>  <!--shows the video element, not sure if this element needs to be present.  Can hide-->
+
 			<script>
 
 			//You need a minimum of three things to display anything with Three.js:  A scene, a camera, and a renderer.
 
-			var scene = new THREE.Scene();    //SCENE
-			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 ); //CAMERA - perspective type
+			var videoInput = document.getElementById('vid');   //umm not 100% sure...
+			var canvasInput = document.getElementById('compare');
 
-			var renderer = new THREE.WebGLRenderer(); //RENDERER
-			renderer.setSize( window.innerWidth, window.innerHeight );
-			document.body.appendChild( renderer.domElement );
 
-			var geometry = new THREE.BoxGeometry(1, 1, 1);  //Object that contains all the points and fill of the cube
-			var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );// Material to color the cube
 
-			var cube = new THREE.Mesh( geometry, material );
-			scene.add( cube );  //Mesh that takes the geometry and applies a material to it
+				function init() {
 
-			  var directionalLight = new THREE.DirectionalLight(0xffffff, 1.0); 
-              directionalLight.position.set(0.0, 0.0, 1.0); 
-		      scene.add(directionalLight); 
+				container = document.createElement( 'div' );
+				document.body.appendChild( container );
 
-			camera.position.z = 5; //Move the camera away from default position of 0, 0, 0
+				scene = new THREE.Scene();    //SCENE
+				
+
+
+				camera = new THREE.PerspectiveCamera( 23, window.innerWidth/window.innerHeight, 0.1, 100000 ); //CAMERA - perspective type
+
+				camera.position.z = 60 //moves camera away from default 0,0,0
+
+			
+
+				renderer = new THREE.WebGLRenderer(); //RENDERER
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				document.body.appendChild( renderer.domElement );
+
+				geometry = new THREE.BoxGeometry(10, 10, 10);  //Object that contains all the points and fill of the cube
+				material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );// Material to color the cube
+
+				cube = new THREE.Mesh( geometry, material );
+				scene.add( cube );  //Mesh that takes the geometry and applies a material to it
+			};
+
+		
 
 		var render = function () {
-			requestAnimationFrame( render  );
+			
 
 			cube.rotation.x += 0.01;
-			cube.rotation.y += 0.01;
+			cube.rotation.y += 0.01;  //rotate that stupid cube
 
-			renderer.render( scene, camera );
+			renderer.render( scene, camera );  //render the scene baby
+			requestAnimationFrame( render  );  
 		};
 
-		render();
+	init();
+	render();
 
+
+		headtrackr.controllers.three.realisticAbsoluteCameraControl(camera, 2/*this is the scale multiplier, higher=smaller*/, [0,0,50], new THREE.Vector3(0,0,0), {damping : 0.9}); //damping seems to be less (more responsive+jittery) as it approaches 1
+			
+
+			// Face detection setup
+			var htracker = new headtrackr.Tracker();
+				htracker.init(videoInput, canvasInput);
+				htracker.start();
+			
+			document.addEventListener('headtrackingEvent', function(event) {
+			scene.fog = new THREE.Fog( 0x000000, 1+(event.z*27), 3000+(event.z*27) );
+			}, false);
 			</script>
 	</body>
 </html>
