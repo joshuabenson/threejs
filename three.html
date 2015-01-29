@@ -42,7 +42,7 @@
 
 				camera = new THREE.PerspectiveCamera( 23, window.innerWidth/window.innerHeight, 0.1, 100000 ); //CAMERA - perspective type
 
-				camera.position.z = 60 //moves camera away from default 0,0,0
+				camera.position.z = 0 //moves camera away from default 0,0,0
 
 
 				renderer = new THREE.WebGLRenderer(); //RENDERER
@@ -52,13 +52,13 @@
 				geometry = new THREE.BoxGeometry(10, 10, 10);  //Object that contains all the points and fill of the cube
 				material = new THREE.MeshLambertMaterial( { color: 0x00ff00 } );// Material to color the cube
 
-				/*cube = new THREE.Mesh( geometry, material );
+				cube = new THREE.Mesh( geometry, material );
 				
 				scene.add( cube );  
 				cube.position.set(3,3,0)
 				//Mesh that takes the geometry and applies a material to it
 
-				cube2 = cube.clone();
+				/*cube2 = cube.clone();
 				scene.add( cube2 );
 				cube2.position.set(3,3,6);*/
 
@@ -74,10 +74,19 @@
     			light.position.set(20,0,10);
    				scene.add(light);
 
-   				var loader = new THREE.ColladaLoader();
-				loader.load('dumb.dae', function (dumb) {
-  				scene.add(dumb.scene);
+   				loader = new THREE.ColladaLoader();
+				loader.load('cop.dae', function (dumb) {
+  				
+				dumb2 = dumb.scene //for some reason I have to assign this value to a new variable, or it will not let me position or rotate the model
+
+				dumb2.scale.x = dumb2.scale.y = dumb2.scale.z = 2;
+				dumb2.position.set(-5,-100,-100);
+				dumb2.rotation.x = -Math.PI/2
+				dumb2.rotation.z = Math.PI/2
+  				scene.add(dumb2);
+  				
 				});
+				
 			
 			};
 
@@ -86,10 +95,16 @@
 		var render = function () {
 			
 
-			/*cube.rotation.x += 0.01;
+			cube.rotation.x += 0.01;
 			cube.rotation.y += 0.01;  //rotate that stupid cube
 
-			cube2.rotation.y += 0.03;*/
+				
+		
+
+			/*cube2.rotation.y += 0.02;
+			cube2.rotationx += .001;*/
+
+
 
 			renderer.render( scene, camera );  //render the scene baby
 			requestAnimationFrame( render  );  
@@ -99,7 +114,7 @@
 	render();
 
 
-		headtrackr.controllers.three.realisticAbsoluteCameraControl(camera, 2/*this is the scale multiplier, higher=smaller*/, [0,0,50], new THREE.Vector3(0,0,0), {damping : 0.9}); //damping seems to be less (more responsive+jittery) as it approaches 1
+		headtrackr.controllers.three.realisticAbsoluteCameraControl(camera, 1/*this is the scale multiplier, higher=smaller*/, [0,0,50], new THREE.Vector3(0,0,0), {damping : 0.9}); //damping seems to be less (more responsive+jittery) as it approaches 1
 			
 
 			// Face detection setup
